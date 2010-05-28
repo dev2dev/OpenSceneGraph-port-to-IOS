@@ -1,0 +1,33 @@
+INCLUDE(CheckCXXSourceRuns)
+
+SET(CMAKE_REQUIRED_INCLUDES ${POPPLER_INCLUDE_DIRS})
+
+# Do step by step checking,
+CHECK_CXX_SOURCE_RUNS("
+#include <cstdlib>
+#include <poppler.h>
+int main()
+{
+#ifdef POPPLER_HAS_CAIRO
+   return EXIT_SUCCESS;
+#else
+   return EXIT_FAILURE
+#endif
+}
+" POPPLER_HAS_CAIRO)
+
+
+IF (POPPLER_HAS_CAIRO)
+
+    SET(TARGET_SRC ReaderWriterPDF.cpp )
+
+    INCLUDE_DIRECTORIES( ${CAIRO_INCLUDE_DIRS} ${POPPLER_INCLUDE_DIRS} )
+    LINK_DIRECTORIES(${CAIRO_LIBRARY_DIRS} ${POPPLER_LIBRARY_DIRS})
+    SET(TARGET_EXTERNAL_LIBRARIES  ${CAIRO_LIBRARIES} ${POPPLER_LIBRARIES} )
+
+    SET(TARGET_ADDED_LIBRARIES osgWidget)
+
+    #### end var setup  ###
+    SETUP_PLUGIN(pdf pdf)
+
+ENDIF()
